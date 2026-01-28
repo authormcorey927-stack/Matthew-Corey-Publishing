@@ -191,12 +191,26 @@
       <!-- body -->
       <line x1="60" y1="40" x2="60" y2="70" class="ink"/>
       <!-- arms -->
-      <line x1="60" y1="50" x2="45" y2="62" class="ink armA1"/>
-      <line x1="60" y1="50" x2="75" y2="62" class="ink armA2"/>
-      <!-- legs -->
-      <line x1="60" y1="70" x2="48" y2="92" class="ink legA1"/>
-      <line x1="60" y1="70" x2="72" y2="92" class="ink legA2"/>
-    </g>
+    <line x1="60" y1="50" x2="45" y2="62" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="18 60 50;-18 60 50;18 60 50" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
+<line x1="60" y1="50" x2="75" y2="62" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="-18 60 50;18 60 50;-18 60 50" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
+<line x1="60" y1="70" x2="48" y2="92" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="-18 60 70;18 60 70;-18 60 70" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
+<line x1="60" y1="70" x2="72" y2="92" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="18 60 70;-18 60 70;18 60 70" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
 
     <!-- dog (comes in after walker leaves) -->
     <g class="dog" transform="translate(0,0)">
@@ -205,7 +219,11 @@
       <!-- head -->
       <circle cx="18" cy="72" r="8" class="ink"/>
       <!-- tail -->
-      <line x1="-18" y1="76" x2="-30" y2="70" class="ink tail"/>
+     <line x1="-18" y1="76" x2="-30" y2="70" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="20 -18 76;-20 -18 76;20 -18 76" dur="0.22s" repeatCount="indefinite"/>
+</line>
+
       <!-- legs -->
       <line x1="-10" y1="86" x2="-10" y2="96" class="ink"/>
       <line x1="0" y1="86" x2="0" y2="96" class="ink"/>
@@ -216,10 +234,26 @@
     <g class="walkerB" transform="translate(0,0)">
       <circle cx="0" cy="30" r="10" class="ink"/>
       <line x1="0" y1="40" x2="0" y2="70" class="ink"/>
-      <line x1="0" y1="50" x2="-15" y2="62" class="ink armB1"/>
-      <line x1="0" y1="50" x2="15" y2="62" class="ink armB2"/>
-      <line x1="0" y1="70" x2="-12" y2="92" class="ink legB1"/>
-      <line x1="0" y1="70" x2="12" y2="92" class="ink legB2"/>
+     <line x1="0" y1="50" x2="-15" y2="62" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="18 0 50;-18 0 50;18 0 50" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
+<line x1="0" y1="50" x2="15" y2="62" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="-18 0 50;18 0 50;-18 0 50" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
+<line x1="0" y1="70" x2="-12" y2="92" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="-18 0 70;18 0 70;-18 0 70" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
+<line x1="0" y1="70" x2="12" y2="92" class="ink">
+  <animateTransform attributeName="transform" type="rotate"
+    values="18 0 70;-18 0 70;18 0 70" dur="0.34s" repeatCount="indefinite"/>
+</line>
+
     </g>
   </svg>
 </div>
