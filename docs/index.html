@@ -1,12 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Matthew Corey</title>
+  <style>
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:#111;
+      background: radial-gradient(900px 600px at 20% 10%, #e9f2ff 0%, #ffffff 55%, #f7f7f7 100%);
+    }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 56px 22px; }
+    .card{
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+      backdrop-filter: blur(8px);
+    }
+    h1{ margin: 0 0 6px; font-size: 44px; letter-spacing: -0.5px; }
+    .tag{ margin: 0 0 22px; font-size: 16px; color: #444; }
+    .lead{ font-size: 18px; line-height: 1.5; color:#222; margin: 0 0 18px; }
+    .grid{ display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 18px; }
+    @media (min-width: 720px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    .btn{
+      display:block; text-decoration:none;
+      padding: 14px 16px; border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #111; color: #fff;
+      font-weight: 700;
+      text-align: center;
+    }
+    .btn.secondary{ background: #fff; color:#111; }
+    .btn:hover{ transform: translateY(-1px); }
+    .footer{ margin-top: 18px; font-size: 13px; color:#666; }
+    .pill{
+      display:inline-block; padding: 6px 10px; border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.12); background: rgba(255,255,255,.7);
+      font-size: 13px; color:#333; margin-right: 8px; margin-bottom: 8px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Matthew Corey</h1>
-  <p>Author. Creator. Builder.</p>
-  <p>This site will host books, merch, and reader resources.</p>
+  <div class="wrap">
+    <div class="card">
+      <div class="pill">📚 Books</div>
+      <div class="pill">👕 Merch</div>
+      <div class="pill">🎙️ Audio</div>
+
+      <h1>Matthew Corey</h1>
+      <p class="tag">Author • Creator • Builder</p>
+
+      <p class="lead">
+        Welcome. This is my official hub for books, merch, and reader resources.
+        New releases and free downloads will live here.
+      </p>
+
+      <div class="grid">
+        <a class="btn" href="#" title="Add your Amazon author page link here">View Books</a>
+        <a class="btn secondary" href="#" title="Add your merch store link here">Shop Merch</a>
+        <a class="btn secondary" href="#" title="Later: connect email signup">Get Free Reader Bonus</a>
+        <a class="btn secondary" href="#" title="Add your contact or booking link here">Contact / Speaking</a>
+      </div>
+
+      <p class="footer">
+        © <span id="y"></span> Matthew Corey. All rights reserved.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
