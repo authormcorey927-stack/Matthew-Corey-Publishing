@@ -89,6 +89,62 @@
       font-size: 13px;
       color: #666;
     }
+/* --- Stick-figure loop animation --- */
+.toon { margin: 18px 0 8px; }
+.toon svg { width: 100%; height: 120px; display: block; }
+
+.ink { stroke: #111; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ground { stroke: rgba(0,0,0,0.18); stroke-width: 2; }
+
+@keyframes walk {
+  0%   { transform: rotate(12deg); }
+  50%  { transform: rotate(-12deg); }
+  100% { transform: rotate(12deg); }
+}
+
+/* Timeline: 0–10s loop */
+@keyframes walkerA_move {
+  0%   { transform: translate(0px,0px); opacity: 1; }
+  60%  { transform: translate(360px,0px); opacity: 1; }   /* walks across */
+  70%  { transform: translate(420px,0px); opacity: 0; }   /* exits */
+  100% { transform: translate(0px,0px); opacity: 0; }     /* stays hidden until reset */
+}
+
+/* Dog enters after walkerA leaves */
+@keyframes dog_move {
+  0%   { transform: translate(520px,0px); opacity: 0; }
+  65%  { transform: translate(520px,0px); opacity: 0; }   /* waiting off-screen */
+  75%  { transform: translate(360px,0px); opacity: 1; }   /* trots in */
+  90%  { transform: translate(80px,0px); opacity: 1; }    /* continues left */
+  100% { transform: translate(-80px,0px); opacity: 0; }   /* exits left */
+}
+
+/* WalkerB appears with dog, then leaves */
+@keyframes walkerB_move {
+  0%   { transform: translate(520px,0px); opacity: 0; }
+  68%  { transform: translate(520px,0px); opacity: 0; }
+  78%  { transform: translate(400px,0px); opacity: 1; }
+  92%  { transform: translate(120px,0px); opacity: 1; }
+  100% { transform: translate(-60px,0px); opacity: 0; }
+}
+
+/* Apply the motion */
+.walkerA { animation: walkerA_move 10s linear infinite; }
+.dog     { animation: dog_move     10s linear infinite; }
+.walkerB { animation: walkerB_move 10s linear infinite; }
+
+/* Wiggle arms/legs for “walking” */
+.armA1, .armA2, .legA1, .legA2,
+.armB1, .armB2, .legB1, .legB2,
+.tail {
+  transform-origin: center;
+  animation: walk 300ms ease-in-out infinite;
+}
+
+/* Offset some limbs so it looks like alternating steps */
+.armA2, .legA2, .armB2, .legB2 { animation-delay: 150ms; }
+.tail { animation-duration: 220ms; }
+
   </style>
 </head>
 
@@ -102,7 +158,52 @@
         Welcome. This is my official hub for books, writing projects, and reader resources.
         New releases and free downloads will live here.
       </p>
+<div class="toon" aria-label="Stick figure and dog animation">
+  <svg viewBox="0 0 520 120" role="img">
+    <!-- ground line -->
+    <line x1="10" y1="96" x2="510" y2="96" class="ground"/>
 
+    <!-- walker A (starts on screen, walks off) -->
+    <g class="walkerA" transform="translate(0,0)">
+      <!-- head -->
+      <circle cx="60" cy="30" r="10" class="ink"/>
+      <!-- body -->
+      <line x1="60" y1="40" x2="60" y2="70" class="ink"/>
+      <!-- arms -->
+      <line x1="60" y1="50" x2="45" y2="62" class="ink armA1"/>
+      <line x1="60" y1="50" x2="75" y2="62" class="ink armA2"/>
+      <!-- legs -->
+      <line x1="60" y1="70" x2="48" y2="92" class="ink legA1"/>
+      <line x1="60" y1="70" x2="72" y2="92" class="ink legA2"/>
+    </g>
+
+    <!-- dog (comes in after walker leaves) -->
+    <g class="dog" transform="translate(0,0)">
+      <!-- body -->
+      <ellipse cx="0" cy="78" rx="18" ry="10" class="ink"/>
+      <!-- head -->
+      <circle cx="18" cy="72" r="8" class="ink"/>
+      <!-- tail -->
+      <line x1="-18" y1="76" x2="-30" y2="70" class="ink tail"/>
+      <!-- legs -->
+      <line x1="-10" y1="86" x2="-10" y2="96" class="ink"/>
+      <line x1="0" y1="86" x2="0" y2="96" class="ink"/>
+      <line x1="10" y1="86" x2="10" y2="96" class="ink"/>
+    </g>
+
+    <!-- walker B (appears with dog, then both leave) -->
+    <g class="walkerB" transform="translate(0,0)">
+      <circle cx="0" cy="30" r="10" class="ink"/>
+      <line x1="0" y1="40" x2="0" y2="70" class="ink"/>
+      <line x1="0" y1="50" x2="-15" y2="62" class="ink armB1"/>
+      <line x1="0" y1="50" x2="15" y2="62" class="ink armB2"/>
+      <line x1="0" y1="70" x2="-12" y2="92" class="ink legB1"/>
+      <line x1="0" y1="70" x2="12" y2="92" class="ink legB2"/>
+    </g>
+  </svg>
+</div>
+
+      
       <div class="actions">
         <a class="btn"
            href="https://www.amazon.com/stores/Matthew-Corey/author/B0DZSX35FH?ref=ap_rdr&shoppingPortalEnabled=true"
