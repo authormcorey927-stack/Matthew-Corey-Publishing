@@ -1,6 +1,6 @@
-# Matthew Corey Publishing
+# Two Dogs Publishing
 
-Welcome to the central hub for all of Matthew Corey’s books, merch, and digital projects.
+Welcome to the central hub for all of Two Dogs Publishing's books, merch, and digital projects.
 
 This repository contains:
 - 📚 Pages and assets for published and upcoming books
@@ -22,7 +22,7 @@ Matthew Corey is an author and creator building original stories and branded wor
 ---
 
 *This README may grow as the project evolves.*
-Central hub for Matthew Corey’s books, merchandise, and digital publishing projects.
+Central hub for Two Dogs Publishing's books, merchandise, and digital publishing projects.
 
 This repository will house:
 - Author website files and landing pages
