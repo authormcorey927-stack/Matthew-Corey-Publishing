@@ -7,77 +7,180 @@
 
   <style>
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background: radial-gradient(900px 600px at 20% 10%, #f3f4f6 0%, #ffffff 55%, #f5f7fa 100%);
-      color: #111;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color:#111;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .wrap{max-width:960px;padding:40px 24px;width:100%;}
+    .card{
+      background:rgba(255,255,255,0.9);
+      border-radius:20px;
+      padding:40px;
+      border:1px solid rgba(0,0,0,0.08);
+      box-shadow:0 10px 30px rgba(0,0,0,0.06);
+    }
+    h1{margin:0 0 6px;font-size:44px;letter-spacing:-0.5px;}
+    .tag{margin:0 0 18px;font-size:16px;color:#444;}
+    .lead{font-size:18px;line-height:1.6;color:#222;margin:0 0 18px;max-width:680px;}
+
+    .actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px;}
+    .btn{
+      display:inline-block;
+      padding:14px 20px;
+      border-radius:14px;
+      background:#111;
+      color:#fff;
+      text-decoration:none;
+      font-weight:700;
+      border:1px solid rgba(0,0,0,0.15);
+    }
+    .btn:hover{background:#000;}
+    .btn.email{background:#fff;color:#111;}
+    .btn.email:hover{background:#f2f2f2;}
+    .footer{margin-top:28px;font-size:13px;color:#666;}
+
+    /* Animation stage */
+    .dog-run{
+      margin:14px 0 8px;
+      width:100%;
+      max-width:680px;
+      overflow:hidden;
+    }
+    .dog-run svg{width:100%;height:auto;display:block;}
+
+    .stroke{
+      fill:none;
+      stroke-width:3;
+      stroke-linecap:round;
+      stroke-linejoin:round;
     }
 
-    .wrap { max-width: 960px; padding: 40px 24px; width: 100%; }
+    .ground{stroke:rgba(0,0,0,0.18);stroke-width:2;}
 
-    .card {
-      background: rgba(255,255,255,0.9);
-      border-radius: 20px;
-      padding: 40px;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    /* ----------- COMEDY LOOP TIMING -----------
+       0-8%:   both hidden off-left
+       8-38%:  run right (big behind, catches)
+       38-44%: "catch" pause (both together)
+       44-66%: run left (big leads, small catches)
+       66-72%: "catch" pause (both together)
+       72-92%: run left offscreen (small leads now)
+       92-100%: hidden reset
+    ------------------------------------------- */
+
+    @keyframes bigX {
+      0%, 7%    { transform: translateX(-180px); opacity: 0; }
+      8%        { opacity: 1; transform: translateX(-180px); }
+
+      /* chase right (behind) */
+      20%       { transform: translateX(120px); }
+      34%       { transform: translateX(360px); }
+
+      /* catch #1 (together) */
+      38%, 44%  { transform: translateX(420px); }
+
+      /* run left (leading) */
+      56%       { transform: translateX(180px); }
+      66%       { transform: translateX(60px); }
+
+      /* catch #2 (together) */
+      66%, 72%  { transform: translateX(60px); }
+
+      /* now trailing behind small, exit left */
+      84%       { transform: translateX(-60px); }
+      92%       { transform: translateX(-180px); opacity: 1; }
+      93%,100%  { transform: translateX(-180px); opacity: 0; }
     }
 
-    h1 { margin: 0 0 6px; font-size: 44px; letter-spacing: -0.5px; }
-    .tag { margin: 0 0 18px; font-size: 16px; color: #444; }
-    .lead { font-size: 18px; line-height: 1.6; color: #222; margin: 0 0 18px; max-width: 680px; }
+    @keyframes smallX {
+      0%, 7%    { transform: translateX(-120px); opacity: 0; }
+      8%        { opacity: 1; transform: translateX(-120px); }
 
-    .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
+      /* chase right (ahead initially) */
+      20%       { transform: translateX(170px); }
+      34%       { transform: translateX(400px); }
 
-    .btn {
-      display: inline-block;
-      padding: 14px 20px;
-      border-radius: 14px;
-      background: #111;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 700;
-      border: 1px solid rgba(0,0,0,0.15);
-    }
-    .btn:hover { background: #000; }
+      /* caught #1 (together) */
+      38%, 44%  { transform: translateX(420px); }
 
-    .btn.email { background: #fff; color: #111; }
-    .btn.email:hover { background: #f2f2f2; }
+      /* run left (trailing, then catches) */
+      56%       { transform: translateX(160px); }
+      66%       { transform: translateX(60px); }
 
-    .footer { margin-top: 28px; font-size: 13px; color: #666; }
+      /* caught #2 (together) */
+      66%, 72%  { transform: translateX(60px); }
 
-    /* Animation container */
-    .dog-run { margin: 14px 0 8px; width: 100%; max-width: 640px; overflow: hidden; }
-    .dog-run svg { width: 100%; height: auto; display: block; }
-
-    .stroke {
-      fill: none;
-      stroke: #111;
-      stroke-width: 3;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+      /* now leading, exit left */
+      84%       { transform: translateX(-90px); }
+      92%       { transform: translateX(-180px); opacity: 1; }
+      93%,100%  { transform: translateX(-180px); opacity: 0; }
     }
 
-    .ground { stroke: rgba(0,0,0,0.18); stroke-width: 2; }
-
-    /* Hydrant */
-    .hydrantFill { fill: #c7352e; stroke: #9f261f; stroke-width: 2; }
-
-    /* Run across + hidden snap-back */
-    @keyframes dash {
-      0%   { transform: translateX(-140px); opacity: 1; }
-      85%  { transform: translateX(740px); opacity: 1; }
-      86%  { opacity: 0; }
-      100% { transform: translateX(-140px); opacity: 0; }
+    /* Facing direction (flip) */
+    @keyframes faceBig {
+      /* right while chasing */
+      0%, 44%   { transform: scaleX(1); }
+      /* left after first catch */
+      44%, 100% { transform: scaleX(-1); }
     }
-    .bigDog   { animation: dash 3.2s linear infinite; }
-    .smallDog { animation: dash 3.2s linear infinite; animation-delay: -1.6s; }
+
+    @keyframes faceSmall {
+      /* right until first catch */
+      0%, 44%   { transform: scaleX(1); }
+      /* left after first catch */
+      44%, 100% { transform: scaleX(-1); }
+    }
+
+    /* Tiny body bounce */
+    @keyframes bob {
+      0%,100% { transform: translateY(0px); }
+      50%     { transform: translateY(2px); }
+    }
+
+    /* Tiny "bonk" squash on catches */
+    @keyframes bonk {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.08, 0.92); }
+    }
+
+    .bigDogPos{ animation: bigX 5.2s linear infinite; }
+    .smallDogPos{ animation: smallX 5.2s linear infinite; }
+
+    .bigDogFace{
+      animation: faceBig 5.2s linear infinite;
+      transform-origin: 90px 92px;
+    }
+    .smallDogFace{
+      animation: faceSmall 5.2s linear infinite;
+      transform-origin: 90px 92px;
+    }
+
+    .bigDogArt{ animation: bob 0.22s ease-in-out infinite; }
+    .smallDogArt{ animation: bob 0.22s ease-in-out infinite; }
+
+    /* bonk only during pause windows by using step timing */
+    .bonkBig{
+      animation: bonk 0.18s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+    .bonkSmall{
+      animation: bonk 0.18s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+
+    /* Turn bonk ON only during the “pause” ranges using CSS animation-delay trick:
+       We duplicate a second animation that toggles play-state by swapping opacity.
+       (Simple + reliable: we just visually bonk via extra scale transforms inside SVG using SMIL below.)
+    */
+
+    /* Colors */
+    .bigBrown{ stroke: #7a4a21; }
+    .smallBlack{ stroke: #111; }
   </style>
 </head>
 
@@ -94,121 +197,96 @@
 
       <div class="dog-run" aria-hidden="true">
         <svg viewBox="0 0 720 140" role="img">
-
-          <!-- ground -->
           <line x1="10" y1="110" x2="710" y2="110" class="ground" />
 
-          <!-- static fire hydrant -->
-          <g transform="translate(520,72)">
-            <rect class="hydrantFill" x="0" y="18" width="26" height="38" rx="6"></rect>
-            <rect class="hydrantFill" x="2" y="6" width="22" height="16" rx="6"></rect>
-            <circle class="hydrantFill" cx="13" cy="6" r="6"></circle>
-            <circle class="hydrantFill" cx="-2" cy="32" r="6"></circle>
-            <circle class="hydrantFill" cx="28" cy="32" r="6"></circle>
-            <rect class="hydrantFill" x="-2" y="56" width="30" height="8" rx="3"></rect>
-          </g>
+          <!-- BIG DOG (brown) -->
+          <g class="bigDogPos">
+            <g class="bigDogFace">
+              <g class="bigDogArt">
+                <!-- BONK squash during the two pause windows -->
+                <animateTransform attributeName="transform" type="scale"
+                  values="1 1; 1.08 0.92; 1 1"
+                  dur="0.18s"
+                  begin="1.98s;3.64s"
+                  repeatCount="2" />
+                <g class="bigBrown stroke">
+                  <ellipse cx="90" cy="86" rx="22" ry="10"></ellipse>
+                  <circle cx="118" cy="78" r="9"></circle>
+                  <line x1="127" y1="78" x2="138" y2="78"></line>
+                  <line x1="114" y1="68" x2="118" y2="60"></line>
+                  <line x1="78" y1="92" x2="112" y2="92"></line>
 
-          <!-- ================= BIG DOG (brown) ================= -->
-          <g class="bigDog">
-            <!-- bounce the entire dog art (so legs stay with body) -->
-            <g stroke="#7a4a21" fill="none">
-              <animateTransform attributeName="transform" type="translate"
-                values="0 0; 0 2; 0 0" dur="0.22s" repeatCount="indefinite" />
+                  <!-- Legs pinned: animate feet only -->
+                  <line x1="84" y1="92" x2="77" y2="110">
+                    <animate attributeName="x2" values="77;91;77" dur="0.18s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="94" y1="92" x2="97" y2="110">
+                    <animate attributeName="x2" values="97;83;97" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;106;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="102" y1="92" x2="105" y2="110">
+                    <animate attributeName="x2" values="105;91;105" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;106;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="112" y1="92" x2="105" y2="110">
+                    <animate attributeName="x2" values="105;119;105" dur="0.18s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
+                  </line>
 
-              <!-- body -->
-              <ellipse class="stroke" cx="90" cy="86" rx="22" ry="10" style="stroke:#7a4a21;"></ellipse>
-              <!-- head -->
-              <circle class="stroke" cx="118" cy="78" r="9" style="stroke:#7a4a21;"></circle>
-              <!-- snout -->
-              <line class="stroke" x1="127" y1="78" x2="138" y2="78" style="stroke:#7a4a21;"></line>
-              <!-- ear -->
-              <line class="stroke" x1="114" y1="68" x2="118" y2="60" style="stroke:#7a4a21;"></line>
-
-              <!-- hip bar -->
-              <line class="stroke" x1="78" y1="92" x2="112" y2="92" style="stroke:#7a4a21;"></line>
-
-              <!-- legs: pinned at top (x1/y1), animate foot (x2/y2) -->
-              <!-- front-left -->
-              <line class="stroke" x1="84" y1="92" x2="77" y2="110" style="stroke:#7a4a21;">
-                <animate attributeName="x2" values="77;91;77" dur="0.18s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
-              </line>
-
-              <!-- front-right (opposite phase) -->
-              <line class="stroke" x1="94" y1="92" x2="97" y2="110" style="stroke:#7a4a21;">
-                <animate attributeName="x2" values="97;83;97" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;106;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-              </line>
-
-              <!-- back-left (opposite phase) -->
-              <line class="stroke" x1="102" y1="92" x2="105" y2="110" style="stroke:#7a4a21;">
-                <animate attributeName="x2" values="105;91;105" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;106;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-              </line>
-
-              <!-- back-right -->
-              <line class="stroke" x1="112" y1="92" x2="105" y2="110" style="stroke:#7a4a21;">
-                <animate attributeName="x2" values="105;119;105" dur="0.18s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
-              </line>
-
-              <!-- tail wag (pinned at base) -->
-              <g transform="translate(68,84)">
-                <line class="stroke" x1="0" y1="0" x2="-14" y2="-8" style="stroke:#7a4a21;">
-                  <animateTransform attributeName="transform" type="rotate"
-                    values="18; -18; 18" dur="0.14s" repeatCount="indefinite" />
-                </line>
+                  <!-- tail wag -->
+                  <g transform="translate(68,84)">
+                    <line x1="0" y1="0" x2="-14" y2="-8">
+                      <animateTransform attributeName="transform" type="rotate"
+                        values="18; -18; 18" dur="0.14s" repeatCount="indefinite" />
+                    </line>
+                  </g>
+                </g>
               </g>
             </g>
           </g>
 
-          <!-- ================= SMALL DOG (25% smaller) ================= -->
-          <g class="smallDog">
-            <!-- scale around the dog’s center so it stays together -->
-            <g transform="translate(90,92) scale(0.75) translate(-90,-92)">
-              <!-- bounce -->
-              <animateTransform attributeName="transform" type="translate"
-                values="0 0; 0 2; 0 0" dur="0.22s" repeatCount="indefinite" />
+          <!-- SMALL DOG (25% smaller) -->
+          <g class="smallDogPos">
+            <g class="smallDogFace">
+              <g class="smallDogArt" transform="translate(90,92) scale(0.75) translate(-90,-92)">
+                <!-- BONK squash during pause windows -->
+                <animateTransform attributeName="transform" type="scale"
+                  values="1 1; 1.08 0.92; 1 1"
+                  dur="0.18s"
+                  begin="1.98s;3.64s"
+                  repeatCount="2" />
+                <g class="smallBlack stroke">
+                  <ellipse cx="90" cy="92" rx="16" ry="7"></ellipse>
+                  <circle cx="110" cy="86" r="7"></circle>
+                  <line x1="117" y1="86" x2="126" y2="86"></line>
+                  <line x1="106" y1="78" x2="102" y2="66"></line>
+                  <line x1="82" y1="96" x2="104" y2="96"></line>
 
-              <!-- body -->
-              <ellipse class="stroke" cx="90" cy="92" rx="16" ry="7"></ellipse>
-              <!-- head -->
-              <circle class="stroke" cx="110" cy="86" r="7"></circle>
-              <!-- snout -->
-              <line class="stroke" x1="117" y1="86" x2="126" y2="86"></line>
-              <!-- big ear -->
-              <line class="stroke" x1="106" y1="78" x2="102" y2="66"></line>
+                  <line x1="86" y1="96" x2="81" y2="110">
+                    <animate attributeName="x2" values="81;92;81" dur="0.18s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;107;110" dur="0.18s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="94" y1="96" x2="97" y2="110">
+                    <animate attributeName="x2" values="97;86;97" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;107;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="98" y1="96" x2="101" y2="110">
+                    <animate attributeName="x2" values="101;90;101" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;107;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="104" y1="96" x2="99" y2="110">
+                    <animate attributeName="x2" values="99;110;99" dur="0.18s" repeatCount="indefinite"/>
+                    <animate attributeName="y2" values="110;107;110" dur="0.18s" repeatCount="indefinite"/>
+                  </line>
 
-              <!-- hip bar -->
-              <line class="stroke" x1="82" y1="96" x2="104" y2="96"></line>
-
-              <!-- legs pinned -->
-              <line class="stroke" x1="86" y1="96" x2="81" y2="110">
-                <animate attributeName="x2" values="81;92;81" dur="0.18s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;107;110" dur="0.18s" repeatCount="indefinite"/>
-              </line>
-
-              <line class="stroke" x1="94" y1="96" x2="97" y2="110">
-                <animate attributeName="x2" values="97;86;97" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;107;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-              </line>
-
-              <line class="stroke" x1="98" y1="96" x2="101" y2="110">
-                <animate attributeName="x2" values="101;90;101" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;107;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
-              </line>
-
-              <line class="stroke" x1="104" y1="96" x2="99" y2="110">
-                <animate attributeName="x2" values="99;110;99" dur="0.18s" repeatCount="indefinite"/>
-                <animate attributeName="y2" values="110;107;110" dur="0.18s" repeatCount="indefinite"/>
-              </line>
-
-              <!-- tail wag -->
-              <g transform="translate(74,90)">
-                <line class="stroke" x1="0" y1="0" x2="-12" y2="-6">
-                  <animateTransform attributeName="transform" type="rotate"
-                    values="18; -18; 18" dur="0.14s" repeatCount="indefinite" />
-                </line>
+                  <g transform="translate(74,90)">
+                    <line x1="0" y1="0" x2="-12" y2="-6">
+                      <animateTransform attributeName="transform" type="rotate"
+                        values="18; -18; 18" dur="0.14s" repeatCount="indefinite" />
+                    </line>
+                  </g>
+                </g>
               </g>
             </g>
           </g>
@@ -218,16 +296,14 @@
 
       <div class="actions">
         <a class="btn"
-           href="https://www.amazon.com/stores/Matthew-Corey/author/B0DZSX35FH?ref=ap_rdr&shoppingPortalEnabled=true"
-           target="_blank"
-           rel="noopener noreferrer">
+          href="https://www.amazon.com/stores/Matthew-Corey/author/B0DZSX35FH?ref=ap_rdr&shoppingPortalEnabled=true"
+          target="_blank" rel="noopener noreferrer">
           View My Books on Amazon
         </a>
 
         <a class="btn email"
-           href="https://matthew-corey-publishing.kit.com/3a14ba691a"
-           target="_blank"
-           rel="noopener noreferrer">
+          href="https://matthew-corey-publishing.kit.com/3a14ba691a"
+          target="_blank" rel="noopener noreferrer">
           Join My Email List (Free Bonus)
         </a>
       </div>
@@ -243,4 +319,3 @@
   </script>
 </body>
 </html>
-
