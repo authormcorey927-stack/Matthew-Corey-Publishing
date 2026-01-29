@@ -7,7 +7,83 @@
 
   <style>
     * { box-sizing: border-box; }
+/* --- Dog chase animation --- */
+.dog-chase {
+  margin: 18px 0 6px;
+  width: 100%;
+  max-width: 520px;
+}
 
+.dog-chase svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.dog .body, .dog .head {
+  fill: none;
+  stroke: #111;
+  stroke-width: 3;
+}
+
+.dog .line, .dog .leg, .dog .tail {
+  stroke: #111;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+/* Move dogs along the track */
+.dog.big {
+  animation: bigRun 2.6s linear infinite;
+}
+
+.dog.small {
+  animation: smallRun 2.6s linear infinite;
+  animation-delay: -1.3s; /* keep them opposite each other */
+}
+
+/* Trotting legs: alternate pairs */
+.dog .leg.lf, .dog .leg.rb { animation: trotA 0.22s ease-in-out infinite; }
+.dog .leg.rf, .dog .leg.lb { animation: trotB 0.22s ease-in-out infinite; }
+
+@keyframes trotA {
+  0%, 100% { transform: rotate(14deg); transform-origin: 0px 6px; }
+  50%      { transform: rotate(-14deg); transform-origin: 0px 6px; }
+}
+
+@keyframes trotB {
+  0%, 100% { transform: rotate(-14deg); transform-origin: 0px 6px; }
+  50%      { transform: rotate(14deg); transform-origin: 0px 6px; }
+}
+
+/* Tail wag */
+.dog .tail { animation: wag 0.18s ease-in-out infinite; transform-origin: -18px -2px; }
+.dog.small .tail { transform-origin: -12px -1px; }
+
+@keyframes wag {
+  0%, 100% { transform: rotate(16deg); }
+  50%      { transform: rotate(-16deg); }
+}
+
+/* Path-follow using offset-path (modern browsers) */
+.dog {
+  offset-path: path("M40,70 C90,15 180,15 210,70 C240,125 330,125 380,70 C330,15 240,15 210,70 C180,125 90,125 40,70");
+  offset-rotate: auto;
+}
+
+@keyframes bigRun {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+@keyframes smallRun {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+
+
+    
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -89,230 +165,53 @@
       font-size: 13px;
       color: #666;
     }
-/* --- Stick-figure loop animation --- */
-    /* Make SVG elements rotate around their own shapes */
-.toon svg * { 
-  transform-box: fill-box; 
-  transform-origin: center; 
-}
+<!-- Dog chase animation -->
+<div class="dog-chase" aria-hidden="true">
+  <svg viewBox="0 0 420 140" role="img">
+    <!-- path guide (invisible) -->
+    <path id="track" d="M40,70 C90,15 180,15 210,70 C240,125 330,125 380,70 C330,15 240,15 210,70 C180,125 90,125 40,70" fill="none"/>
 
-.toon { margin: 18px 0 8px; }
-.toon svg { width: 100%; height: 120px; display: block; }
+    <!-- BIG DOG -->
+    <g class="dog big">
+      <!-- body -->
+      <ellipse class="body" cx="0" cy="0" rx="18" ry="9"></ellipse>
+      <!-- head -->
+      <circle class="head" cx="18" cy="-6" r="7"></circle>
+      <!-- snout -->
+      <line class="line" x1="24" y1="-6" x2="30" y2="-6"></line>
+      <!-- ear -->
+      <line class="line" x1="16" y1="-12" x2="18" y2="-16"></line>
 
-.ink { stroke: #111; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.ground { stroke: rgba(0,0,0,0.18); stroke-width: 2; }
+      <!-- legs (simple stick trot) -->
+      <line class="leg lf" x1="-6" y1="8" x2="-12" y2="18"></line>
+      <line class="leg rf" x1="2"  y1="8" x2="6"   y2="18"></line>
+      <line class="leg lb" x1="-2" y1="8" x2="-8"  y2="18"></line>
+      <line class="leg rb" x1="8"  y1="8" x2="12"  y2="18"></line>
 
-@keyframes walk {
-  0%   { transform: rotate(18deg); }
-  50%  { transform: rotate(-18deg); }
-  100% { transform: rotate(18deg); }
-}
-
-/* Timeline: 0–10s loop */
-@keyframes walkerA_move {
-  0%   { transform: translate(0px,0px); opacity: 1; }
-  60%  { transform: translate(360px,0px); opacity: 1; }   /* walks across */
-  70%  { transform: translate(420px,0px); opacity: 0; }   /* exits */
-  100% { transform: translate(0px,0px); opacity: 0; }     /* stays hidden until reset */
-}
-
-/* Dog enters after walkerA leaves */
-@keyframes dog_move {
-  0%   { transform: translate(520px,0px); opacity: 0; }
-  65%  { transform: translate(520px,0px); opacity: 0; }   /* waiting off-screen */
-  75%  { transform: translate(360px,0px); opacity: 1; }   /* trots in */
-  90%  { transform: translate(80px,0px); opacity: 1; }    /* continues left */
-  100% { transform: translate(-80px,0px); opacity: 0; }   /* exits left */
-}
-
-/* WalkerB appears with dog, then leaves */
-@keyframes walkerB_move {
-  0%   { transform: translate(520px,0px); opacity: 0; }
-  68%  { transform: translate(520px,0px); opacity: 0; }
-  78%  { transform: translate(400px,0px); opacity: 1; }
-  92%  { transform: translate(120px,0px); opacity: 1; }
-  100% { transform: translate(-60px,0px); opacity: 0; }
-}
-
-/* Apply the motion */
-.walkerA { animation: walkerA_move 10s linear infinite; }
-.dog     { animation: dog_move     10s linear infinite; }
-.walkerB { animation: walkerB_move 10s linear infinite; }
-
-/* Arms pivot from the shoulder (top of the line) */
-.armA1, .armA2, .armB1, .armB2 {
-  transform-origin: 50% 0%;
-  animation: walkSwing 320ms ease-in-out infinite;
-}
-
-/* Legs pivot from the hip (top of the line) */
-.legA1, .legA2, .legB1, .legB2 {
-  transform-origin: 50% 0%;
-  animation: walkSwing 320ms ease-in-out infinite;
-}
-
-/* Tail pivots from the base */
-.tail {
-  transform-origin: 0% 50%;
-  animation: walkSwing 220ms ease-in-out infinite;
-}
-
-/* Opposite limbs out of phase */
-.armA2, .legA2, .armB2, .legB2 { animation-delay: 160ms; }
-
-
-
-/* Offset some limbs so it looks like alternating steps */
-.armA2, .legA2, .armB2, .legB2 { animation-delay: 150ms; }
-.tail { animation-duration: 220ms; }
-
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Matthew Corey</h1>
-      <p class="tag">Author • Creator • Builder</p>
-
-      <p class="lead">
-        Welcome. This is my official hub for books, writing projects, and reader resources.
-        New releases and free downloads will live here.
-      </p>
-<div class="toon" aria-label="Stick figure and dog animation">
-  <svg viewBox="0 0 520 120" role="img" width="100%" height="120">
-    <defs>
-      <style>
-        .ink { stroke:#111; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round; }
-        .ground { stroke:rgba(0,0,0,0.18); stroke-width:2; }
-      </style>
-    </defs>
-
-    <!-- ground -->
-    <line x1="10" y1="96" x2="510" y2="96" class="ground"/>
-
-    <!-- =========================
-         WALKER A (0s–6.5s) walks across, then disappears
-         ========================= -->
-    <g id="walkerA" class="ink" transform="translate(40 0)">
-      <!-- move across -->
-      <animateTransform attributeName="transform" type="translate"
-        values="40 0; 360 0; 420 0"
-        keyTimes="0; 0.6; 0.65"
-        dur="10s" repeatCount="indefinite" />
-
-      <!-- fade out after exiting -->
-      <animate attributeName="opacity"
-        values="1;1;0;0"
-        keyTimes="0;0.64;0.66;1"
-        dur="10s" repeatCount="indefinite" />
-
-      <!-- head + body -->
-      <circle cx="0" cy="30" r="10"/>
-      <line x1="0" y1="40" x2="0" y2="70"/>
-
-      <!-- arms (pivot at shoulder = 0,50) -->
-      <g transform="translate(0 50)">
-        <line x1="0" y1="0" x2="-16" y2="12">
-          <animateTransform attributeName="transform" type="rotate"
-            values="18; -18; 18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-        <line x1="0" y1="0" x2="16" y2="12">
-          <animateTransform attributeName="transform" type="rotate"
-            values="-18; 18; -18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-      </g>
-
-      <!-- legs (pivot at hip = 0,70) -->
-      <g transform="translate(0 70)">
-        <line x1="0" y1="0" x2="-12" y2="22">
-          <animateTransform attributeName="transform" type="rotate"
-            values="-18; 18; -18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-        <line x1="0" y1="0" x2="12" y2="22">
-          <animateTransform attributeName="transform" type="rotate"
-            values="18; -18; 18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-      </g>
+      <!-- tail -->
+      <line class="tail" x1="-18" y1="-2" x2="-28" y2="-10"></line>
     </g>
 
-    <!-- =========================
-         DOG (starts hidden, enters ~6.5s, exits by end)
-         ========================= -->
-    <g id="dog" class="ink" opacity="0" transform="translate(520 0)">
-      <!-- appear around 6.5s -->
-      <animate attributeName="opacity"
-        values="0;0;1;1;0"
-        keyTimes="0;0.65;0.7;0.92;1"
-        dur="10s" repeatCount="indefinite"/>
-
-      <!-- move from right to left after 6.5s -->
-      <animateTransform attributeName="transform" type="translate"
-        values="520 0; 520 0; 360 0; 80 0; -80 0"
-        keyTimes="0;0.65;0.75;0.92;1"
-        dur="10s" repeatCount="indefinite"/>
-
-      <!-- body + head -->
-      <ellipse cx="0" cy="78" rx="18" ry="10"/>
-      <circle cx="18" cy="72" r="8"/>
-
-      <!-- wagging tail (pivot at -18,76) -->
-      <g transform="translate(-18 76)">
-        <line x1="0" y1="0" x2="-12" y2="-6">
-          <animateTransform attributeName="transform" type="rotate"
-            values="25; -25; 25" dur="0.22s" repeatCount="indefinite"/>
-        </line>
-      </g>
+    <!-- SMALL DOG -->
+    <g class="dog small">
+      <!-- body -->
+      <ellipse class="body" cx="0" cy="0" rx="12" ry="6"></ellipse>
+      <!-- head -->
+      <circle class="head" cx="12" cy="-4" r="5"></circle>
+      <!-- snout -->
+      <line class="line" x1="16" y1="-4" x2="20" y2="-4"></line>
+      <!-- ear (bigger for chiweenie vibe) -->
+      <line class="line" x1="10" y1="-8" x2="8"  y2="-14"></line>
 
       <!-- legs -->
-      <line x1="-10" y1="86" x2="-10" y2="96"/>
-      <line x1="0" y1="86" x2="0" y2="96"/>
-      <line x1="10" y1="86" x2="10" y2="96"/>
+      <line class="leg lf" x1="-4" y1="6" x2="-8"  y2="14"></line>
+      <line class="leg rf" x1="1"  y1="6" x2="4"   y2="14"></line>
+      <line class="leg lb" x1="-1" y1="6" x2="-5"  y2="14"></line>
+      <line class="leg rb" x1="6"  y1="6" x2="9"   y2="14"></line>
+
+      <!-- tail -->
+      <line class="tail" x1="-12" y1="-1" x2="-20" y2="-6"></line>
     </g>
-
-    <!-- =========================
-         WALKER B (with dog, enters after A leaves)
-         ========================= -->
-    <g id="walkerB" class="ink" opacity="0" transform="translate(520 0)">
-      <animate attributeName="opacity"
-        values="0;0;1;1;0"
-        keyTimes="0;0.68;0.74;0.92;1"
-        dur="10s" repeatCount="indefinite"/>
-
-      <animateTransform attributeName="transform" type="translate"
-        values="520 0; 520 0; 400 0; 120 0; -60 0"
-        keyTimes="0;0.68;0.78;0.92;1"
-        dur="10s" repeatCount="indefinite"/>
-
-      <!-- head + body -->
-      <circle cx="0" cy="30" r="10"/>
-      <line x1="0" y1="40" x2="0" y2="70"/>
-
-      <!-- arms -->
-      <g transform="translate(0 50)">
-        <line x1="0" y1="0" x2="-16" y2="12">
-          <animateTransform attributeName="transform" type="rotate"
-            values="18; -18; 18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-        <line x1="0" y1="0" x2="16" y2="12">
-          <animateTransform attributeName="transform" type="rotate"
-            values="-18; 18; -18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-      </g>
-
-      <!-- legs -->
-      <g transform="translate(0 70)">
-        <line x1="0" y1="0" x2="-12" y2="22">
-          <animateTransform attributeName="transform" type="rotate"
-            values="-18; 18; -18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-        <line x1="0" y1="0" x2="12" y2="22">
-          <animateTransform attributeName="transform" type="rotate"
-            values="18; -18; 18" dur="0.32s" repeatCount="indefinite"/>
-        </line>
-      </g>
-    </g>
-
   </svg>
 </div>
 
