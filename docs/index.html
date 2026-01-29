@@ -19,11 +19,7 @@
       justify-content: center;
     }
 
-    .wrap {
-      max-width: 960px;
-      padding: 40px 24px;
-      width: 100%;
-    }
+    .wrap { max-width: 960px; padding: 40px 24px; width: 100%; }
 
     .card {
       background: rgba(255,255,255,0.9);
@@ -37,12 +33,7 @@
     .tag { margin: 0 0 18px; font-size: 16px; color: #444; }
     .lead { font-size: 18px; line-height: 1.6; color: #222; margin: 0 0 18px; max-width: 680px; }
 
-    .actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
+    .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
 
     .btn {
       display: inline-block;
@@ -61,21 +52,9 @@
 
     .footer { margin-top: 28px; font-size: 13px; color: #666; }
 
-    /* -----------------------------
-       Two-dog horizontal run loop
-       ----------------------------- */
-    .dog-run {
-      margin: 14px 0 8px;
-      width: 100%;
-      max-width: 640px;
-      overflow: hidden;
-    }
-
-    .dog-run svg {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+    /* Animation container */
+    .dog-run { margin: 14px 0 8px; width: 100%; max-width: 640px; overflow: hidden; }
+    .dog-run svg { width: 100%; height: auto; display: block; }
 
     .stroke {
       fill: none;
@@ -85,48 +64,20 @@
       stroke-linejoin: round;
     }
 
-    /* Big dog = brown */
-    .bigDogArt .stroke { stroke: #7a4a21; }
+    .ground { stroke: rgba(0,0,0,0.18); stroke-width: 2; }
 
-    .ground {
-      stroke: rgba(0,0,0,0.18);
-      stroke-width: 2;
-    }
-
-    /* fire hydrant style */
-    .hydrant { fill: none; stroke: rgba(0,0,0,0.25); stroke-width: 2; }
+    /* Hydrant */
     .hydrantFill { fill: #c7352e; stroke: #9f261f; stroke-width: 2; }
 
-    /* Outer group moves left->right, then snaps back hidden */
+    /* Run across + hidden snap-back */
     @keyframes dash {
       0%   { transform: translateX(-140px); opacity: 1; }
       85%  { transform: translateX(740px); opacity: 1; }
       86%  { opacity: 0; }
       100% { transform: translateX(-140px); opacity: 0; }
     }
-
     .bigDog   { animation: dash 3.2s linear infinite; }
     .smallDog { animation: dash 3.2s linear infinite; animation-delay: -1.6s; }
-
-    /* Tiny body bounce (applied to INNER art group, not the moving one) */
-    @keyframes bob {
-      0%, 100% { transform: translateY(0px); }
-      50%      { transform: translateY(2px); }
-    }
-
-    .bigDogArt  { animation: bob 0.22s ease-in-out infinite; }
-    .smallDogArt { animation: bob 0.22s ease-in-out infinite; }
-
-    /* Leg motion (stays under body) */
-    @keyframes stepA { 0%,100%{ transform: rotate(16deg);} 50%{ transform: rotate(-16deg);} }
-    @keyframes stepB { 0%,100%{ transform: rotate(-16deg);} 50%{ transform: rotate(16deg);} }
-
-    .legA { transform-origin: 0px 0px; animation: stepA 0.18s ease-in-out infinite; }
-    .legB { transform-origin: 0px 0px; animation: stepB 0.18s ease-in-out infinite; }
-
-    /* Tail wag */
-    @keyframes wag { 0%,100%{ transform: rotate(18deg);} 50%{ transform: rotate(-18deg);} }
-    .tail { transform-origin: 0px 0px; animation: wag 0.14s ease-in-out infinite; }
   </style>
 </head>
 
@@ -141,67 +92,84 @@
         New releases and free downloads will live here.
       </p>
 
-      <!-- Two dogs running horizontally (loop) -->
       <div class="dog-run" aria-hidden="true">
         <svg viewBox="0 0 720 140" role="img">
+
           <!-- ground -->
           <line x1="10" y1="110" x2="710" y2="110" class="ground" />
 
           <!-- static fire hydrant -->
           <g transform="translate(520,72)">
-            <!-- main body -->
             <rect class="hydrantFill" x="0" y="18" width="26" height="38" rx="6"></rect>
-            <!-- top -->
             <rect class="hydrantFill" x="2" y="6" width="22" height="16" rx="6"></rect>
             <circle class="hydrantFill" cx="13" cy="6" r="6"></circle>
-            <!-- side caps -->
             <circle class="hydrantFill" cx="-2" cy="32" r="6"></circle>
             <circle class="hydrantFill" cx="28" cy="32" r="6"></circle>
-            <!-- base -->
             <rect class="hydrantFill" x="-2" y="56" width="30" height="8" rx="3"></rect>
           </g>
 
-          <!-- BIG DOG (outer move group) -->
+          <!-- ================= BIG DOG (brown) ================= -->
           <g class="bigDog">
-            <!-- INNER art group bounces -->
-            <g class="bigDogArt">
+            <!-- bounce the entire dog art (so legs stay with body) -->
+            <g stroke="#7a4a21" fill="none">
+              <animateTransform attributeName="transform" type="translate"
+                values="0 0; 0 2; 0 0" dur="0.22s" repeatCount="indefinite" />
+
               <!-- body -->
-              <ellipse class="stroke" cx="90" cy="86" rx="22" ry="10"></ellipse>
+              <ellipse class="stroke" cx="90" cy="86" rx="22" ry="10" style="stroke:#7a4a21;"></ellipse>
               <!-- head -->
-              <circle class="stroke" cx="118" cy="78" r="9"></circle>
+              <circle class="stroke" cx="118" cy="78" r="9" style="stroke:#7a4a21;"></circle>
               <!-- snout -->
-              <line class="stroke" x1="127" y1="78" x2="138" y2="78"></line>
+              <line class="stroke" x1="127" y1="78" x2="138" y2="78" style="stroke:#7a4a21;"></line>
               <!-- ear -->
-              <line class="stroke" x1="114" y1="68" x2="118" y2="60"></line>
+              <line class="stroke" x1="114" y1="68" x2="118" y2="60" style="stroke:#7a4a21;"></line>
 
-              <!-- hip bar (makes legs feel attached) -->
-              <line class="stroke" x1="78" y1="92" x2="112" y2="92"></line>
+              <!-- hip bar -->
+              <line class="stroke" x1="78" y1="92" x2="112" y2="92" style="stroke:#7a4a21;"></line>
 
-              <!-- legs (attached) -->
-              <g class="legA" transform="translate(82,92)">
-                <line class="stroke" x1="0" y1="0" x2="-7" y2="18"></line>
-              </g>
-              <g class="legB" transform="translate(92,92)">
-                <line class="stroke" x1="0" y1="0" x2="-2" y2="18"></line>
-              </g>
-              <g class="legB" transform="translate(102,92)">
-                <line class="stroke" x1="0" y1="0" x2="2" y2="18"></line>
-              </g>
-              <g class="legA" transform="translate(112,92)">
-                <line class="stroke" x1="0" y1="0" x2="7" y2="18"></line>
-              </g>
+              <!-- legs: pinned at top (x1/y1), animate foot (x2/y2) -->
+              <!-- front-left -->
+              <line class="stroke" x1="84" y1="92" x2="77" y2="110" style="stroke:#7a4a21;">
+                <animate attributeName="x2" values="77;91;77" dur="0.18s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
+              </line>
 
-              <!-- tail -->
-              <g class="tail" transform="translate(68,84)">
-                <line class="stroke" x1="0" y1="0" x2="-14" y2="-8"></line>
+              <!-- front-right (opposite phase) -->
+              <line class="stroke" x1="94" y1="92" x2="97" y2="110" style="stroke:#7a4a21;">
+                <animate attributeName="x2" values="97;83;97" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;106;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+              </line>
+
+              <!-- back-left (opposite phase) -->
+              <line class="stroke" x1="102" y1="92" x2="105" y2="110" style="stroke:#7a4a21;">
+                <animate attributeName="x2" values="105;91;105" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;106;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+              </line>
+
+              <!-- back-right -->
+              <line class="stroke" x1="112" y1="92" x2="105" y2="110" style="stroke:#7a4a21;">
+                <animate attributeName="x2" values="105;119;105" dur="0.18s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
+              </line>
+
+              <!-- tail wag (pinned at base) -->
+              <g transform="translate(68,84)">
+                <line class="stroke" x1="0" y1="0" x2="-14" y2="-8" style="stroke:#7a4a21;">
+                  <animateTransform attributeName="transform" type="rotate"
+                    values="18; -18; 18" dur="0.14s" repeatCount="indefinite" />
+                </line>
               </g>
             </g>
           </g>
 
-          <!-- SMALL DOG (outer move group) -->
+          <!-- ================= SMALL DOG (25% smaller) ================= -->
           <g class="smallDog">
-            <!-- INNER art group bounces + scaled down 25% -->
-            <g class="smallDogArt" transform="translate(90,92) scale(0.75) translate(-90,-92)">
+            <!-- scale around the dog’s center so it stays together -->
+            <g transform="translate(90,92) scale(0.75) translate(-90,-92)">
+              <!-- bounce -->
+              <animateTransform attributeName="transform" type="translate"
+                values="0 0; 0 2; 0 0" dur="0.22s" repeatCount="indefinite" />
+
               <!-- body -->
               <ellipse class="stroke" cx="90" cy="92" rx="16" ry="7"></ellipse>
               <!-- head -->
@@ -214,26 +182,37 @@
               <!-- hip bar -->
               <line class="stroke" x1="82" y1="96" x2="104" y2="96"></line>
 
-              <!-- legs -->
-              <g class="legA" transform="translate(84,96)">
-                <line class="stroke" x1="0" y1="0" x2="-5" y2="14"></line>
-              </g>
-              <g class="legB" transform="translate(92,96)">
-                <line class="stroke" x1="0" y1="0" x2="-2" y2="14"></line>
-              </g>
-              <g class="legB" transform="translate(98,96)">
-                <line class="stroke" x1="0" y1="0" x2="2" y2="14"></line>
-              </g>
-              <g class="legA" transform="translate(104,96)">
-                <line class="stroke" x1="0" y1="0" x2="5" y2="14"></line>
-              </g>
+              <!-- legs pinned -->
+              <line class="stroke" x1="86" y1="96" x2="81" y2="110">
+                <animate attributeName="x2" values="81;92;81" dur="0.18s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;107;110" dur="0.18s" repeatCount="indefinite"/>
+              </line>
 
-              <!-- tail -->
-              <g class="tail" transform="translate(74,90)">
-                <line class="stroke" x1="0" y1="0" x2="-12" y2="-6"></line>
+              <line class="stroke" x1="94" y1="96" x2="97" y2="110">
+                <animate attributeName="x2" values="97;86;97" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;107;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+              </line>
+
+              <line class="stroke" x1="98" y1="96" x2="101" y2="110">
+                <animate attributeName="x2" values="101;90;101" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;107;110" dur="0.18s" begin="0.09s" repeatCount="indefinite"/>
+              </line>
+
+              <line class="stroke" x1="104" y1="96" x2="99" y2="110">
+                <animate attributeName="x2" values="99;110;99" dur="0.18s" repeatCount="indefinite"/>
+                <animate attributeName="y2" values="110;107;110" dur="0.18s" repeatCount="indefinite"/>
+              </line>
+
+              <!-- tail wag -->
+              <g transform="translate(74,90)">
+                <line class="stroke" x1="0" y1="0" x2="-12" y2="-6">
+                  <animateTransform attributeName="transform" type="rotate"
+                    values="18; -18; 18" dur="0.14s" repeatCount="indefinite" />
+                </line>
               </g>
             </g>
           </g>
+
         </svg>
       </div>
 
@@ -264,3 +243,4 @@
   </script>
 </body>
 </html>
+
