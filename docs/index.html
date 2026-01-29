@@ -6,11 +6,8 @@
   <title>Matthew Corey</title>
 
   <style>
+    /* Base */
     * { box-sizing: border-box; }
-
-
-
-    
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -22,6 +19,7 @@
       justify-content: center;
     }
 
+    /* Layout */
     .wrap {
       max-width: 960px;
       padding: 40px 24px;
@@ -36,6 +34,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
 
+    /* Typography */
     h1 {
       margin: 0 0 6px;
       font-size: 44px;
@@ -43,7 +42,7 @@
     }
 
     .tag {
-      margin: 0 0 20px;
+      margin: 0 0 18px;
       font-size: 16px;
       color: #444;
     }
@@ -52,15 +51,16 @@
       font-size: 18px;
       line-height: 1.6;
       color: #222;
-      margin: 0 0 26px;
+      margin: 0 0 18px;
       max-width: 680px;
     }
 
+    /* Buttons */
     .actions {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
-      margin-top: 16px;
+      margin-top: 18px;
     }
 
     .btn {
@@ -74,76 +74,156 @@
       border: 1px solid rgba(0,0,0,0.15);
     }
 
-    .btn:hover {
-      background: #000;
-    }
+    .btn:hover { background: #000; }
 
     .btn.email {
       background: #fff;
       color: #111;
     }
 
-    .btn.email:hover {
-      background: #f2f2f2;
-    }
+    .btn.email:hover { background: #f2f2f2; }
 
     .footer {
-      margin-top: 30px;
+      margin-top: 28px;
       font-size: 13px;
       color: #666;
     }
-<!-- Dog chase animation -->
-<div class="dog-chase" aria-hidden="true">
-  <svg viewBox="0 0 420 140" role="img">
-    <!-- path guide (invisible) -->
-    <path id="track" d="M40,70 C90,15 180,15 210,70 C240,125 330,125 380,70 C330,15 240,15 210,70 C180,125 90,125 40,70" fill="none"/>
 
-    <!-- BIG DOG -->
-    <g class="dog big">
-      <!-- body -->
-      <ellipse class="body" cx="0" cy="0" rx="18" ry="9"></ellipse>
-      <!-- head -->
-      <circle class="head" cx="18" cy="-6" r="7"></circle>
-      <!-- snout -->
-      <line class="line" x1="24" y1="-6" x2="30" y2="-6"></line>
-      <!-- ear -->
-      <line class="line" x1="16" y1="-12" x2="18" y2="-16"></line>
+    /* -----------------------------
+       Two-dog stick animation
+       ----------------------------- */
+    .dog-chase {
+      margin: 16px 0 6px;
+      width: min(560px, 100%);
+      padding: 10px 0;
+    }
 
-      <!-- legs (simple stick trot) -->
-      <line class="leg lf" x1="-6" y1="8" x2="-12" y2="18"></line>
-      <line class="leg rf" x1="2"  y1="8" x2="6"   y2="18"></line>
-      <line class="leg lb" x1="-2" y1="8" x2="-8"  y2="18"></line>
-      <line class="leg rb" x1="8"  y1="8" x2="12"  y2="18"></line>
+    .dog-chase svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
 
-      <!-- tail -->
-      <line class="tail" x1="-18" y1="-2" x2="-28" y2="-10"></line>
-    </g>
+    .dog .stroke {
+      fill: none;
+      stroke: #111;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
-    <!-- SMALL DOG -->
-    <g class="dog small">
-      <!-- body -->
-      <ellipse class="body" cx="0" cy="0" rx="12" ry="6"></ellipse>
-      <!-- head -->
-      <circle class="head" cx="12" cy="-4" r="5"></circle>
-      <!-- snout -->
-      <line class="line" x1="16" y1="-4" x2="20" y2="-4"></line>
-      <!-- ear (bigger for chiweenie vibe) -->
-      <line class="line" x1="10" y1="-8" x2="8"  y2="-14"></line>
+    /* Use CSS Motion Path to move dogs around a loop */
+    .dog {
+      offset-path: path("M60,70 C120,20 210,20 250,70 C290,120 380,120 400,70 C380,20 290,20 250,70 C210,120 120,120 60,70");
+      offset-rotate: auto;
+    }
 
-      <!-- legs -->
-      <line class="leg lf" x1="-4" y1="6" x2="-8"  y2="14"></line>
-      <line class="leg rf" x1="1"  y1="6" x2="4"   y2="14"></line>
-      <line class="leg lb" x1="-1" y1="6" x2="-5"  y2="14"></line>
-      <line class="leg rb" x1="6"  y1="6" x2="9"   y2="14"></line>
+    .dog.big {
+      animation: run 2.7s linear infinite;
+    }
 
-      <!-- tail -->
-      <line class="tail" x1="-12" y1="-1" x2="-20" y2="-6"></line>
-    </g>
-  </svg>
-</div>
+    .dog.small {
+      animation: run 2.7s linear infinite;
+      animation-delay: -1.35s; /* puts the small dog opposite */
+    }
 
+    @keyframes run {
+      from { offset-distance: 0%; }
+      to   { offset-distance: 100%; }
+    }
 
-      
+    /* Simple leg swing */
+    .legA { transform-origin: 0px 0px; animation: legA 0.18s ease-in-out infinite alternate; }
+    .legB { transform-origin: 0px 0px; animation: legB 0.18s ease-in-out infinite alternate; }
+
+    @keyframes legA { from { transform: rotate(18deg); } to { transform: rotate(-18deg); } }
+    @keyframes legB { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+
+    /* Tail wag */
+    .tail { transform-origin: 0px 0px; animation: wag 0.15s ease-in-out infinite alternate; }
+    @keyframes wag { from { transform: rotate(18deg); } to { transform: rotate(-18deg); } }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Matthew Corey</h1>
+      <p class="tag">Author • Creator • Builder</p>
+
+      <p class="lead">
+        Welcome. This is my official hub for books, writing projects, and reader resources.
+        New releases and free downloads will live here.
+      </p>
+
+      <!-- Animation -->
+      <div class="dog-chase" aria-hidden="true">
+        <svg viewBox="0 0 460 140" role="img">
+          <!-- BIG DOG -->
+          <g class="dog big">
+            <!-- body -->
+            <ellipse class="stroke" cx="0" cy="0" rx="18" ry="9"></ellipse>
+            <!-- head -->
+            <circle class="stroke" cx="18" cy="-6" r="7"></circle>
+            <!-- snout -->
+            <line class="stroke" x1="24" y1="-6" x2="32" y2="-6"></line>
+            <!-- ear -->
+            <line class="stroke" x1="15" y1="-12" x2="18" y2="-17"></line>
+
+            <!-- legs -->
+            <g class="legA">
+              <line class="stroke" x1="-6" y1="7" x2="-12" y2="18"></line>
+            </g>
+            <g class="legB">
+              <line class="stroke" x1="2" y1="7" x2="6" y2="18"></line>
+            </g>
+            <g class="legB">
+              <line class="stroke" x1="-2" y1="7" x2="-8" y2="18"></line>
+            </g>
+            <g class="legA">
+              <line class="stroke" x1="8" y1="7" x2="12" y2="18"></line>
+            </g>
+
+            <!-- tail -->
+            <g class="tail">
+              <line class="stroke" x1="-18" y1="-2" x2="-30" y2="-10"></line>
+            </g>
+          </g>
+
+          <!-- SMALL DOG -->
+          <g class="dog small">
+            <!-- body -->
+            <ellipse class="stroke" cx="0" cy="0" rx="12" ry="6"></ellipse>
+            <!-- head -->
+            <circle class="stroke" cx="12" cy="-4" r="5"></circle>
+            <!-- snout -->
+            <line class="stroke" x1="16" y1="-4" x2="22" y2="-4"></line>
+            <!-- ear (bigger) -->
+            <line class="stroke" x1="10" y1="-8" x2="7" y2="-16"></line>
+
+            <!-- legs -->
+            <g class="legA">
+              <line class="stroke" x1="-4" y1="5" x2="-8" y2="14"></line>
+            </g>
+            <g class="legB">
+              <line class="stroke" x1="1" y1="5" x2="4" y2="14"></line>
+            </g>
+            <g class="legB">
+              <line class="stroke" x1="-1" y1="5" x2="-5" y2="14"></line>
+            </g>
+            <g class="legA">
+              <line class="stroke" x1="6" y1="5" x2="9" y2="14"></line>
+            </g>
+
+            <!-- tail -->
+            <g class="tail">
+              <line class="stroke" x1="-12" y1="-1" x2="-22" y2="-6"></line>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Buttons -->
       <div class="actions">
         <a class="btn"
            href="https://www.amazon.com/stores/Matthew-Corey/author/B0DZSX35FH?ref=ap_rdr&shoppingPortalEnabled=true"
@@ -171,3 +251,4 @@
   </script>
 </body>
 </html>
+
