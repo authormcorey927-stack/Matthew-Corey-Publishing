@@ -31,13 +31,8 @@
 
     .actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px;}
     .btn{
-      display:inline-block;
-      padding:14px 20px;
-      border-radius:14px;
-      background:#111;
-      color:#fff;
-      text-decoration:none;
-      font-weight:700;
+      display:inline-block;padding:14px 20px;border-radius:14px;
+      background:#111;color:#fff;text-decoration:none;font-weight:700;
       border:1px solid rgba(0,0,0,0.15);
     }
     .btn:hover{background:#000;}
@@ -45,142 +40,109 @@
     .btn.email:hover{background:#f2f2f2;}
     .footer{margin-top:28px;font-size:13px;color:#666;}
 
-    /* Animation stage */
-    .dog-run{
-      margin:14px 0 8px;
-      width:100%;
-      max-width:680px;
-      overflow:hidden;
-    }
+    .dog-run{margin:14px 0 8px;width:100%;max-width:700px;overflow:hidden;}
     .dog-run svg{width:100%;height:auto;display:block;}
-
-    .stroke{
-      fill:none;
-      stroke-width:3;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
-
+    .stroke{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
     .ground{stroke:rgba(0,0,0,0.18);stroke-width:2;}
 
-    /* ----------- COMEDY LOOP TIMING -----------
-       0-8%:   both hidden off-left
-       8-38%:  run right (big behind, catches)
-       38-44%: "catch" pause (both together)
-       44-66%: run left (big leads, small catches)
-       66-72%: "catch" pause (both together)
-       72-92%: run left offscreen (small leads now)
-       92-100%: hidden reset
-    ------------------------------------------- */
+    /* ====== NEW LOOP (more separation + fast turn + no freeze) ======
+       Total loop: 6.0s
+
+       Phase A: BIG runs to spot & waits
+       - 0% -> 26% : BIG runs right to spot
+       - 26% -> 38%: BIG waits at spot (small is still left)
+
+       Phase B: SMALL runs to spot & catches (big still)
+       - 38% -> 56%: SMALL runs right to spot
+       - 56% -> 58%: QUICK FLIP (big turns left) while moving a few pixels
+
+       Phase C: BIG runs back left & waits
+       - 58% -> 76%: BIG runs left off toward start zone
+       - 76% -> 84%: BIG waits near left
+
+       Phase D: SMALL runs left, catches, then flips and exits left
+       - 84% -> 95%: SMALL runs left to catch zone
+       - 95% -> 97%: QUICK FLIP (small turns right briefly?) then immediately both run left
+       - 97% -> 100%: both exit left / reset hidden
+    */
 
     @keyframes bigX {
-      0%, 7%    { transform: translateX(-180px); opacity: 0; }
-      8%        { opacity: 1; transform: translateX(-180px); }
+      0%    { transform: translateX(-190px); opacity:0; }
+      2%    { transform: translateX(-190px); opacity:1; }
 
-      /* chase right (behind) */
-      20%       { transform: translateX(120px); }
-      34%       { transform: translateX(360px); }
+      /* run right to spot */
+      26%   { transform: translateX(430px); opacity:1; }
 
-      /* catch #1 (together) */
-      38%, 44%  { transform: translateX(420px); }
+      /* wait at spot */
+      38%   { transform: translateX(430px); }
 
-      /* run left (leading) */
-      56%       { transform: translateX(180px); }
-      66%       { transform: translateX(60px); }
+      /* quick turn window: keep moving a bit so not "static" */
+      56%   { transform: translateX(430px); }
+      58%   { transform: translateX(418px); }  /* tiny nudge during flip */
 
-      /* catch #2 (together) */
-      66%, 72%  { transform: translateX(60px); }
+      /* run left */
+      76%   { transform: translateX(-120px); }
 
-      /* now trailing behind small, exit left */
-      84%       { transform: translateX(-60px); }
-      92%       { transform: translateX(-180px); opacity: 1; }
-      93%,100%  { transform: translateX(-180px); opacity: 0; }
+      /* wait near left */
+      84%   { transform: translateX(-120px); }
+
+      /* exit/reset */
+      95%   { transform: translateX(-190px); opacity:1; }
+      96%   { opacity:0; }
+      100%  { transform: translateX(-190px); opacity:0; }
     }
 
     @keyframes smallX {
-      0%, 7%    { transform: translateX(-120px); opacity: 0; }
-      8%        { opacity: 1; transform: translateX(-120px); }
+      0%    { transform: translateX(-190px); opacity:0; }
+      2%    { transform: translateX(-190px); opacity:1; }
 
-      /* chase right (ahead initially) */
-      20%       { transform: translateX(170px); }
-      34%       { transform: translateX(400px); }
+      /* stay left while big goes to spot */
+      38%   { transform: translateX(-190px); }
 
-      /* caught #1 (together) */
-      38%, 44%  { transform: translateX(420px); }
+      /* run right to catch */
+      56%   { transform: translateX(430px); }
 
-      /* run left (trailing, then catches) */
-      56%       { transform: translateX(160px); }
-      66%       { transform: translateX(60px); }
+      /* quick flip window: move a bit */
+      58%   { transform: translateX(418px); }
 
-      /* caught #2 (together) */
-      66%, 72%  { transform: translateX(60px); }
+      /* hang back while big runs left (so separation reads) */
+      76%   { transform: translateX(260px); }
 
-      /* now leading, exit left */
-      84%       { transform: translateX(-90px); }
-      92%       { transform: translateX(-180px); opacity: 1; }
-      93%,100%  { transform: translateX(-180px); opacity: 0; }
+      /* now chase left to catch */
+      95%   { transform: translateX(-120px); }
+
+      /* quick flip / exit */
+      97%   { transform: translateX(-150px); }
+
+      99%   { transform: translateX(-190px); opacity:1; }
+      100%  { transform: translateX(-190px); opacity:0; }
     }
 
-    /* Facing direction (flip) */
+    /* Facing direction: snap flip FAST (2% window) */
     @keyframes faceBig {
-      /* right while chasing */
-      0%, 44%   { transform: scaleX(1); }
-      /* left after first catch */
-      44%, 100% { transform: scaleX(-1); }
+      0%, 56%   { transform: scaleX(1); }    /* facing right */
+      58%,100%  { transform: scaleX(-1); }   /* facing left after quick turn */
     }
 
     @keyframes faceSmall {
-      /* right until first catch */
-      0%, 44%   { transform: scaleX(1); }
-      /* left after first catch */
-      44%, 100% { transform: scaleX(-1); }
+      0%, 56%   { transform: scaleX(1); }    /* facing right until it reaches spot */
+      58%,100%  { transform: scaleX(-1); }   /* then it heads left */
     }
 
     /* Tiny body bounce */
-    @keyframes bob {
-      0%,100% { transform: translateY(0px); }
-      50%     { transform: translateY(2px); }
-    }
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
 
-    /* Tiny "bonk" squash on catches */
-    @keyframes bonk {
-      0%,100% { transform: scale(1); }
-      50%     { transform: scale(1.08, 0.92); }
-    }
+    .bigDogPos   { animation: bigX 6s linear infinite; }
+    .smallDogPos { animation: smallX 6s linear infinite; }
 
-    .bigDogPos{ animation: bigX 5.2s linear infinite; }
-    .smallDogPos{ animation: smallX 5.2s linear infinite; }
+    .bigDogFace  { animation: faceBig 6s linear infinite; transform-origin: 90px 92px; }
+    .smallDogFace{ animation: faceSmall 6s linear infinite; transform-origin: 90px 92px; }
 
-    .bigDogFace{
-      animation: faceBig 5.2s linear infinite;
-      transform-origin: 90px 92px;
-    }
-    .smallDogFace{
-      animation: faceSmall 5.2s linear infinite;
-      transform-origin: 90px 92px;
-    }
+    .bigDogArt   { animation: bob 0.22s ease-in-out infinite; }
+    .smallDogArt { animation: bob 0.22s ease-in-out infinite; }
 
-    .bigDogArt{ animation: bob 0.22s ease-in-out infinite; }
-    .smallDogArt{ animation: bob 0.22s ease-in-out infinite; }
-
-    /* bonk only during pause windows by using step timing */
-    .bonkBig{
-      animation: bonk 0.18s ease-in-out infinite;
-      animation-play-state: paused;
-    }
-    .bonkSmall{
-      animation: bonk 0.18s ease-in-out infinite;
-      animation-play-state: paused;
-    }
-
-    /* Turn bonk ON only during the “pause” ranges using CSS animation-delay trick:
-       We duplicate a second animation that toggles play-state by swapping opacity.
-       (Simple + reliable: we just visually bonk via extra scale transforms inside SVG using SMIL below.)
-    */
-
-    /* Colors */
-    .bigBrown{ stroke: #7a4a21; }
-    .smallBlack{ stroke: #111; }
+    .bigBrown{ stroke:#7a4a21; }
+    .smallBlack{ stroke:#111; }
   </style>
 </head>
 
@@ -203,12 +165,6 @@
           <g class="bigDogPos">
             <g class="bigDogFace">
               <g class="bigDogArt">
-                <!-- BONK squash during the two pause windows -->
-                <animateTransform attributeName="transform" type="scale"
-                  values="1 1; 1.08 0.92; 1 1"
-                  dur="0.18s"
-                  begin="1.98s;3.64s"
-                  repeatCount="2" />
                 <g class="bigBrown stroke">
                   <ellipse cx="90" cy="86" rx="22" ry="10"></ellipse>
                   <circle cx="118" cy="78" r="9"></circle>
@@ -216,7 +172,7 @@
                   <line x1="114" y1="68" x2="118" y2="60"></line>
                   <line x1="78" y1="92" x2="112" y2="92"></line>
 
-                  <!-- Legs pinned: animate feet only -->
+                  <!-- legs pinned: animate feet only -->
                   <line x1="84" y1="92" x2="77" y2="110">
                     <animate attributeName="x2" values="77;91;77" dur="0.18s" repeatCount="indefinite"/>
                     <animate attributeName="y2" values="110;106;110" dur="0.18s" repeatCount="indefinite"/>
@@ -250,12 +206,6 @@
           <g class="smallDogPos">
             <g class="smallDogFace">
               <g class="smallDogArt" transform="translate(90,92) scale(0.75) translate(-90,-92)">
-                <!-- BONK squash during pause windows -->
-                <animateTransform attributeName="transform" type="scale"
-                  values="1 1; 1.08 0.92; 1 1"
-                  dur="0.18s"
-                  begin="1.98s;3.64s"
-                  repeatCount="2" />
                 <g class="smallBlack stroke">
                   <ellipse cx="90" cy="92" rx="16" ry="7"></ellipse>
                   <circle cx="110" cy="86" r="7"></circle>
