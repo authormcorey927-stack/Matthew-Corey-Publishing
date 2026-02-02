@@ -1,12 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Matthew Corey</title>
+<meta charset="UTF-8" />
+<title>Dog Animation</title>
+<style>
+  body{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    padding:40px;
+    background:#fafafa;
+  }
+
+  .dog-run{
+    width:700px;
+    overflow:hidden;
+    margin-top:30px;
+  }
+
+  svg{ width:100%; height:auto; }
+
+  .stroke{
+    fill:none;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .ground{ stroke:rgba(0,0,0,0.2); stroke-width:2; }
+
+  .bigBrown{ stroke:#7a4a21; }
+  .smallBlack{ stroke:#111; }
+
+  /* ======================
+     MASTER TIMING — 8s
+     ====================== */
+
+  /* BIG DOG — horizontal */
+  @keyframes bigX{
+    0%,7%{ transform:translateX(-190px); opacity:0; }
+    8%{ opacity:1; }
+
+    34%{ transform:translateX(380px); }
+    40%{ transform:translateX(380px); }
+
+    70%{ transform:translateX(380px); }
+
+    82%{ transform:translateX(-190px); opacity:1; }
+    83%,100%{ opacity:0; transform:translateX(-190px); }
+  }
+
+  /* BIG DOG — 3 jumps */
+  @keyframes bigJump{
+    0%,39%{ transform:translateY(0); }
+
+    40%{ transform:translateY(0); }
+    44%{ transform:translateY(-22px); }
+    50%{ transform:translateY(0); }
+
+    52%{ transform:translateY(0); }
+    56%{ transform:translateY(-22px); }
+    60%{ transform:translateY(0); }
+
+    62%{ transform:translateY(0); }
+    66%{ transform:translateY(-22px); }
+    70%{ transform:translateY(0); }
+
+    100%{ transform:translateY(0); }
+  }
+
+  /* SMALL DOG — horizontal + orbit */
+  @keyframes smallX{
+    0%,7%{ transform:translateX(-190px); opacity:0; }
+    8%{ opacity:1; }
+
+    34%{ transform:translateX(380px); }
+    40%{ transform:translateX(380px); }
+
+    /* orbit illusion */
+    42%{ transform:translateX(350px); }
+    45%{ transform:translateX(410px); }
+    48%{ transform:translateX(345px); }
+    51%{ transform:translateX(415px); }
+    54%{ transform:translateX(348px); }
+    57%{ transform:translateX(412px); }
+    60%{ transform:translateX(352px); }
+    63%{ transform:translateX(408px); }
+    66%{ transform:translateX(350px); }
+    70%{ transform:translateX(380px); }
+
+    82%{ transform:translateX(300px); }
+
+    92%{ transform:translateX(-190px); opacity:1; }
+    93%,100%{ opacity:0; transform:translateX(-190px); }
+  }
+
+  /* Facing */
+  @keyframes faceBig{
+    0%,70%{ transform:scaleX(1); }
+    70%,100%{ transform:scaleX(-1); }
+  }
+
+  @keyframes faceSmall{
+    0%,70%{ transform:scaleX(1); }
+    70%,100%{ transform:scaleX(-1); }
+  }
+
+  /* tiny idle bob */
+  @keyframes bob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(2px); }
+  }
+
+  /* APPLY */
+  .bigDogPos{ animation:bigX 8s linear infinite; }
+  .smallDogPos{ animation:smallX 8s linear infinite; }
+
+  .bigDogFace{
+    animation:faceBig 8s linear infinite;
+    transform-origin:90px 92px;
+  }
+
+  .smallDogFace{
+    animation:faceSmall 8s linear infinite;
+    transform-origin:90px 92px;
+  }
+
+  .bigDogArt{ animation:bigJump 8s linear infinite; }
+  .smallDogArt{ animation:bob .22s ease-in-out infinite; }
+</style>
 </head>
+
 <body>
-  <h1>Matthew Corey</h1>
-  <p>Author. Creator. Builder.</p>
-  <p>This site will host books, merch, and reader resources.</p>
+
+<h1>Matthew Corey</h1>
+
+<div class="dog-run">
+<svg viewBox="0 0 700 140">
+
+  <line class="ground" x1="0" y1="110" x2="700" y2="110"/>
+
+  <!-- BIG DOG -->
+  <g class="bigDogPos">
+    <g class="bigDogFace">
+      <g class="bigDogArt">
+        <g class="bigBrown stroke">
+          <ellipse cx="90" cy="86" rx="22" ry="10"/>
+          <circle cx="118" cy="78" r="9"/>
+          <line x1="127" y1="78" x2="138" y2="78"/>
+          <line x1="114" y1="68" x2="118" y2="60"/>
+          <line x1="78" y1="92" x2="112" y2="92"/>
+
+          <line x1="84" y1="92" x2="77" y2="110"/>
+          <line x1="96" y1="92" x2="96" y2="110"/>
+          <line x1="108" y1="92" x2="116" y2="110"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- SMALL DOG -->
+  <g class="smallDogPos">
+    <g class="smallDogFace">
+      <g class="smallDogArt" transform="translate(90,92) scale(.75) translate(-90,-92)">
+        <g class="smallBlack stroke">
+          <ellipse cx="90" cy="92" rx="16" ry="7"/>
+          <circle cx="110" cy="86" r="7"/>
+          <line x1="116" y1="86" x2="126" y2="86"/>
+          <line x1="104" y1="78" x2="108" y2="70"/>
+          <line x1="80" y1="96" x2="102" y2="96"/>
+
+          <line x1="84" y1="96" x2="80" y2="110"/>
+          <line x1="96" y1="96" x2="96" y2="110"/>
+          <line x1="108" y1="96" x2="112" y2="110"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+</svg>
+</div>
+
 </body>
 </html>
