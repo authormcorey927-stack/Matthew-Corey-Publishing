@@ -1,511 +1,106 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Jump Jump Jump</title>
-  <style>
-    :root{
-      --bg:#0b0f1a;
-      --ground:#121a2a;
-      --ink:#eaf2ff;
-      --muted:#9fb2d6;
+<meta charset="utf-8">
+<title>Jump Jump Jump</title>
+<style>
+  body{
+    margin:0;
+    background:#0b0f1a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+  }
+  .stage{
+    width:900px;
+    height:400px;
+    border-radius:16px;
+    background:#121a2a;
+    position:relative;
+    overflow:hidden;
+  }
+  .dog{
+    position:absolute;
+    bottom:60px;
+    font-size:72px;
+    transform-origin:center center;
+    will-change:transform;
+  }
+  .small{ font-size:56px; }
 
-      /* DOG SIZES */
-      --bigSize: 82px;
-      --smallSize: 58px;
-
-      /* Feel free to swap emoji for images later */
-    }
-
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background: radial-gradient(1200px 700px at 50% 20%, #121a2a 0%, var(--bg) 60%, #070a12 100%);
-      color:var(--ink);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      display:flex;
-      flex-direction:column;
-      min-height:100vh;
-    }
-
-    header{
-      padding:18px 18px 10px;
-      text-align:center;
-    }
-    header h1{margin:0;font-size:18px;letter-spacing:.4px}
-    header p{margin:6px 0 0;color:var(--muted);font-size:13px}
-
-    .stage-wrap{
-      display:flex;
-      justify-content:center;
-      padding:10px 18px 26px;
-      flex:1;
-    }
-
-    .stage{
-      width:min(980px, 100%);
-      height: min(420px, 60vh);
-      border-radius:18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.02) 35%, rgba(0,0,0,.0) 100%);
-      border:1px solid rgba(255,255,255,.10);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .ground{
-      position:absolute;
-      left:0;right:0;bottom:0;
-      height:110px;
-      background: linear-gradient(180deg, rgba(18,26,42,.0) 0%, rgba(18,26,42,.6) 18%, rgba(18,26,42,1) 100%);
-      border-top:1px solid rgba(255,255,255,.06);
-    }
-
-    .hint{
-      position:absolute;
-      left:18px; top:16px;
-      font-size:12px;
-      color:rgba(234,242,255,.75);
-      background:rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.10);
-      padding:8px 10px;
-      border-radius:12px;
-      backdrop-filter: blur(6px);
-    }
-
-    .dog{
-      position:absolute;
-      bottom:58px; /* sits above ground */
-      will-change: transform;
-      user-select:none;
-      filter: drop-shadow(0 10px 16px rgba(0,0,0,.45));
-    }
-
-    .dog.big{
-      font-size:var(--bigSize);
-      transform: translate3d(0,0,0);
-    }
-    .dog.small{
-      font-size:var(--smallSize);
-      transform: translate3d(0,0,0);
-    }
-
-    /* Cute “bounce” when running */
-    .run-bob{
-      animation: bob 260ms ease-in-out infinite alternate;
-    }
-    @keyframes bob{
-      from{ transform: translate3d(var(--x), 0px, 0) scaleX(var(--sx)); }
-      to  { transform: translate3d(var(--x), -4px, 0) scaleX(var(--sx)); }
-    }
-
-    /* Jump uses translateY overlayed with x transform */
-    .jump{
-      animation: jump 420ms cubic-bezier(.2,.9,.25,1) 1;
-    }
-    @keyframes jump{
-      0%   { transform: translate3d(var(--x), 0px, 0) scaleX(var(--sx)); }
-      45%  { transform: translate3d(var(--x), -88px, 0) scaleX(var(--sx)); }
-      100% { transform: translate3d(var(--x), 0px, 0) scaleX(var(--sx)); }
-    }
-
-    /* Controls */
-    .controls{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      padding:0 18px 22px;
-      flex-wrap:wrap;
-    }
-    button{
-      border:none;
-      padding:12px 16px;
-      border-radius:14px;
-      background:#111;
-      color:#fff;
-      font-weight:800;
-      letter-spacing:.25px;
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.12);
-    }
-    button:hover{background:#141414}
-    button:active{transform: translateY(1px)}
-  </style>
+  /* Snappy, minimal-stretch jump (linear timing, short duration) */
+  .jump{
+    animation: jump 260ms linear;
+  }
+  @keyframes jump{
+    0%{   transform: translate(var(--x),0) scaleX(var(--dir)); }
+    50%{  transform: translate(var(--x),-78px) scaleX(var(--dir)); }
+    100%{ transform: translate(var(--x),0) scaleX(var(--dir)); }
+  }
+</style>
 </head>
 
 <body>
-  <header>
-    <h1>Jump Jump Jump</h1>
-    <p>Single-file animation (safe to copy/paste). Tune timing in the JS “TWEAKS” section.</p>
-  </header>
-
-  <div class="stage-wrap">
-    <div class="stage" id="stage">
-      <div class="hint">Click <b>Play</b>. Little dog catches big dog → big dog jumps 3× → little dog “orbits” → both exit.</div>
-
-      <div class="dog big" id="bigDog" aria-label="big dog">🐕</div>
-      <div class="dog small" id="smallDog" aria-label="small dog">🐕‍🦺</div>
-
-      <div class="ground"></div>
-    </div>
-  </div>
-
-  <div class="controls">
-    <button id="playBtn">Play</button>
-    <button id="resetBtn">Reset</button>
-  </div>
+<div class="stage" id="stage">
+  <div class="dog big" id="big">🐕</div>
+  <div class="dog small" id="small">🐕‍🦺</div>
+</div>
 
 <script>
-/* =========================================================
-   TWEAKS (these fix “delay wrong / turns too soon / too slow”)
-   ========================================================= */
+/* =======================
+   TUNING (edit these only)
+   ======================= */
 
-const T = {
-  // Approach speed (px per frame). Increase = faster.
-  approachSpeed: 7.5,
+// Entry / chase feel
+const BIG_ENTRY_LEAD_MS   = 0;    // big starts immediately
+const SMALL_ENTRY_DELAY_MS= 220;  // little starts after this delay (chasing feel)
+const CHASE_GAP_PX        = 85;   // how far behind the little dog stays during chase
 
-  // Exit speed (px per frame)
-  exitSpeed: 9.2,
+// Speeds
+const SPEED_BIG_RUN   = 9.5;      // big dog run speed
+const SPEED_SMALL_RUN = 10.2;     // little slightly faster so it can “catch”
+const SPEED_EXIT      = 10.5;
 
-  // Big dog jump timing
-  jumpDurationMs: 420,      // should match CSS @keyframes jump duration
-  jumpCount: 3,
+// Jumps
+const JUMP_COUNT      = 3;
+const JUMP_GAP_MS     = 90;       // pause between jumps (short/snappy)
 
-  // When to trigger small dog orbit (fraction of jump duration).
-  // “back end of the jump” = around 0.70 to 0.85
-  orbitTriggerAt: 0.78,
+// Orbit
+const ORBIT_PASSES    = 5;        // how many back/forth “laps”
+const ORBIT_WIDTH     = 105;      // left/right distance around big dog
+const SPEED_ORBIT     = 14.5;     // orbit speed (fast)
+const ORBIT_START_ON_JUMP = 1;    // trigger orbit on jump #1 at the back end
+const ORBIT_TRIGGER_FRACTION = 0.78; // “back end of jump” timing
 
-  // Orbit behavior: how many “back and forth” passes
-  orbitPasses: 5,
+// Exit staggering (prevents overlap at the end)
+const EXIT_DELAY_SMALL_MS = 520;
 
-  // Orbit speed (how fast it zips left/right around big dog)
-  orbitSpeed: 10.0,
-
-  // Orbit width (how wide it goes side to side around big dog)
-  orbitHalfWidth: 95,
-
-  // Small “pause” after catch before first jump starts (ms)
-  catchPauseMs: 140,
-
-  // Small pause between jumps (ms)
-  betweenJumpsMs: 110,
-};
-
-/* =========================================================
-   Engine
-   ========================================================= */
+/* ======================= */
 
 const stage = document.getElementById('stage');
-const bigDog = document.getElementById('bigDog');
-const smallDog = document.getElementById('smallDog');
-const playBtn = document.getElementById('playBtn');
-const resetBtn = document.getElementById('resetBtn');
+const big   = document.getElementById('big');
+const small = document.getElementById('small');
 
-let rafId = null;
-let running = false;
+let stageW = stage.clientWidth;
 
-const state = {
-  stageW: 0,
-  bigX: 0,
-  smallX: 0,
-  bigSX: 1,
-  smallSX: 1,
-  phase: 'idle',
-  jumpIndex: 0,
-  orbiting: false,
-  orbitDir: 1,
-  orbitPassCount: 0,
-  orbitTargetLeft: 0,
-  orbitTargetRight: 0,
-};
+let bigX   = -150;   // offscreen left
+let smallX = -210;   // further offscreen left
 
-function measure(){
-  state.stageW = stage.clientWidth;
+let orbiting = false;
+let orbitDir = 1;
+let orbitPassesDone = 0;
 
-  // Starting positions: big dog sits a bit right of center; small dog starts off-screen left
-  state.bigX = Math.round(state.stageW * 0.56);
-  state.smallX = -120;
-
-  // Face directions
-  state.bigSX = 1;
-  state.smallSX = 1;
-
-  applyTransforms();
-}
-
-function setDogTransform(el, x, sx){
-  // Use CSS variables so bob/jump animations can layer without breaking x positioning
+function setDog(el, x, dir){
   el.style.setProperty('--x', `${x}px`);
-  el.style.setProperty('--sx', sx);
-  // When not animating bob/jump, set a base transform too:
-  if(!el.classList.contains('run-bob') && !el.classList.contains('jump')){
-    el.style.transform = `translate3d(${x}px,0,0) scaleX(${sx})`;
-  }
+  el.style.setProperty('--dir', dir);
+  el.style.transform = `translate(${x}px,0) scaleX(${dir})`;
 }
 
-function applyTransforms(){
-  setDogTransform(bigDog, state.bigX, state.bigSX);
-  setDogTransform(smallDog, state.smallX, state.smallSX);
-}
-
-function stopRAF(){
-  if(rafId) cancelAnimationFrame(rafId);
-  rafId = null;
-}
-
-function setPhase(p){
-  state.phase = p;
-}
-
-function sleep(ms){
-  return new Promise(r => setTimeout(r, ms));
-}
-
-/* =========================================================
-   Behaviors
-   ========================================================= */
-
-async function playSequence(){
-  if(running) return;
-  running = true;
-  playBtn.disabled = true;
-
-  setPhase('approach');
-  smallDog.classList.add('run-bob');
-  bigDog.classList.add('run-bob');
-
-  await approachAndCatch();
-
-  // little pause after catch
-  await sleep(T.catchPauseMs);
-
-  // big dog jumps 3 times; orbit triggers at back end of jump #1
-  await bigDogJump3AndOrbit();
-
-  // big exits after 3rd landing
-  setPhase('bigExit');
-  await bigExitRight();
-
-  // small exits after orbit completes (it may already be done by now; if not, wait)
-  setPhase('smallExit');
-  await smallExitRight();
-
-  // Cleanup
-  smallDog.classList.remove('run-bob');
-  bigDog.classList.remove('run-bob');
-  setPhase('done');
-
-  running = false;
-  playBtn.disabled = false;
-}
-
-function resetAll(){
-  running = false;
-  playBtn.disabled = false;
-
-  stopRAF();
-
-  // clear animation classes
-  bigDog.classList.remove('run-bob','jump');
-  smallDog.classList.remove('run-bob','jump');
-
-  // reset state machine
-  state.phase = 'idle';
-  state.jumpIndex = 0;
-  state.orbiting = false;
-  state.orbitDir = 1;
-  state.orbitPassCount = 0;
-
-  measure();
-}
-
-function approachAndCatch(){
-  return new Promise((resolve) => {
-    // Catch point: a little left of big dog so small “catches” it
-    const catchX = Math.round(state.stageW * 0.50);
-
-    function step(){
-      // Move small dog right toward catchX
-      state.smallX += T.approachSpeed;
-
-      // Face right
-      state.smallSX = 1;
-
-      // Big dog stays put during approach
-      state.bigSX = 1;
-
-      // Apply
-      applyTransforms();
-
-      if(state.smallX >= catchX){
-        // Snap to exact catch point
-        state.smallX = catchX;
-        applyTransforms();
-        stopRAF();
-        resolve();
-        return;
-      }
-      rafId = requestAnimationFrame(step);
-    }
-
-    rafId = requestAnimationFrame(step);
-  });
-}
-
-async function bigDogJump3AndOrbit(){
-  state.jumpIndex = 0;
-
-  for(let i=0;i<T.jumpCount;i++){
-    state.jumpIndex = i + 1;
-
-    // Jump start
-    triggerJump(bigDog);
-
-    // On first jump, trigger orbit at "back end"
-    if(i === 0){
-      const triggerMs = Math.floor(T.jumpDurationMs * T.orbitTriggerAt);
-      setTimeout(() => {
-        if(!state.orbiting){
-          startSmallOrbit();
-        }
-      }, triggerMs);
-    }
-
-    // Wait for jump to finish
-    await sleep(T.jumpDurationMs);
-
-    // Ensure jump class removed (in case browser doesn't)
-    bigDog.classList.remove('jump');
-    // restore base transform after jump so it doesn't “stick”
-    setDogTransform(bigDog, state.bigX, state.bigSX);
-
-    // Pause between jumps (except after last)
-    if(i < T.jumpCount - 1){
-      await sleep(T.betweenJumpsMs);
-    }
-  }
-}
-
-function triggerJump(el){
-  // Remove and re-add to restart animation
+function jump(el){
   el.classList.remove('jump');
-  // force reflow
   void el.offsetWidth;
   el.classList.add('jump');
 }
 
-function startSmallOrbit(){
-  state.orbiting = true;
-  state.orbitPassCount = 0;
-
-  // Orbit band around big dog
-  const center = state.bigX;
-  state.orbitTargetLeft  = center - T.orbitHalfWidth;
-  state.orbitTargetRight = center + T.orbitHalfWidth;
-
-  // Start on left side (from catch point), head right first
-  state.orbitDir = 1;
-
-  // Small dog keeps bobbing while orbiting
-  smallDog.classList.add('run-bob');
-
-  // Kick orbit loop (does not block jumps)
-  orbitLoop();
-}
-
-function orbitLoop(){
-  if(!state.orbiting) return;
-
-  // Determine target
-  const target = state.orbitDir === 1 ? state.orbitTargetRight : state.orbitTargetLeft;
-
-  // Move toward target
-  const dx = target - state.smallX;
-  const step = Math.sign(dx) * Math.min(Math.abs(dx), T.orbitSpeed);
-  state.smallX += step;
-
-  // Face direction of travel
-  state.smallSX = state.orbitDir === 1 ? 1 : -1;
-
-  applyTransforms();
-
-  // Reached target? flip direction and count a pass
-  if(Math.abs(target - state.smallX) <= 0.001){
-    state.orbitDir *= -1;
-    state.orbitPassCount += 1;
-
-    if(state.orbitPassCount >= T.orbitPasses){
-      // Finish orbit: face right ready to exit
-      state.orbiting = false;
-      state.smallSX = 1;
-      applyTransforms();
-      return;
-    }
-  }
-
-  rafId = requestAnimationFrame(orbitLoop);
-}
-
-function bigExitRight(){
-  return new Promise((resolve) => {
-    // Make sure big dog faces right and runs
-    state.bigSX = 1;
-    bigDog.classList.add('run-bob');
-
-    function step(){
-      state.bigX += T.exitSpeed;
-      applyTransforms();
-
-      // Offscreen right?
-      if(state.bigX > state.stageW + 140){
-        stopRAF();
-        resolve();
-        return;
-      }
-      rafId = requestAnimationFrame(step);
-    }
-    rafId = requestAnimationFrame(step);
-  });
-}
-
-async function smallExitRight(){
-  // If orbit still running, wait until it finishes
-  while(state.orbiting){
-    await sleep(40);
-  }
-
-  return new Promise((resolve) => {
-    state.smallSX = 1;
-    smallDog.classList.add('run-bob');
-
-    function step(){
-      state.smallX += T.exitSpeed;
-      applyTransforms();
-
-      if(state.smallX > state.stageW + 140){
-        stopRAF();
-        resolve();
-        return;
-      }
-      rafId = requestAnimationFrame(step);
-    }
-    rafId = requestAnimationFrame(step);
-  });
-}
-
-/* =========================================================
-   Hook up buttons & init
-   ========================================================= */
-
-playBtn.addEventListener('click', playSequence);
-resetBtn.addEventListener('click', resetAll);
-
-window.addEventListener('resize', () => {
-  // Only re-measure if not running
-  if(!running) measure();
-});
-
-measure();
-</script>
-</body>
-</html>
+function sleep(ms){ return new Promise(r => setTimeo
